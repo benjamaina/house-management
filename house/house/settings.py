@@ -27,6 +27,22 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# MPesa API credentials
+MPESA_SHORTCODE = 'your_shortcode'  # Replace with your shortcode from MPesa
+MPESA_LIPA_NA_MPESA_SHORTCODE = 'your_lipa_na_mpesa_shortcode'  # Lipa na Mpesa shortcode for payments
+MPESA_LIPA_NA_MPESA_SHORTCODE_SHORTCODE = 'your_shortcode'  # If different from the one above
+MPESA_LIPA_NA_MPESA_SHORTCODE_SHORTCODE = 'your_shortcode'  # If different from the one above
+MPESA_INITIATOR = 'your_initiator_name'  # Initiator name from Safaricom
+MPESA_SECURITY_CREDENTIAL = 'your_security_credential'  # Security credentials (usually provided by Safaricom)
+MPESA_LIPA_NA_MPESA_SHORTCODE_SHORTCODE = 'pass'
+
+
+# Disable automatic login
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Forces re-login when browser closes
+SESSION_COOKIE_AGE = 3600  # Auto logout after 1 hour
+SESSION_SAVE_EVERY_REQUEST = True  # Refreshes session on every request
+
+
 
 # Application definition
 

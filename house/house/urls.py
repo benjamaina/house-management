@@ -19,12 +19,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
 from rest_framework.authtoken.views import obtain_auth_token
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import views as auth_views
 
 def home(request):
-    return HttpResponse("Welcome to the house project")
+    return HttpResponse("Welcome to the House Management System!")
 urlpatterns = [
     path("", home, name="home"),
     path("admin/", admin.site.urls),
+    path("acounts/", include("django.contrib.auth.urls")),
     path("api/", include("tennants.urls")),
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
 
