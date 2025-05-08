@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+import subprocess
+
+# subprocess.Popen(["streamlit", "run", "home.py"])
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +27,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*v0#mx*i!4vgvr4qtz9-4-b%70ekb&as&l+g)f$6^7k+inuizi"
-
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "False")== "True"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 # MPesa API credentials
 MPESA_SHORTCODE = 'your_shortcode'  # Replace with your shortcode from MPesa
@@ -37,12 +42,10 @@ MPESA_SECURITY_CREDENTIAL = 'your_security_credential'  # Security credentials (
 MPESA_LIPA_NA_MPESA_SHORTCODE_SHORTCODE = 'pass'
 
 
-# Disable automatic login
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Forces re-login when browser closes
-SESSION_COOKIE_AGE = 3600  # Auto logout after 1 hour
-SESSION_SAVE_EVERY_REQUEST = True  # Refreshes session on every request
-
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies to be sent with CORS requests
 
 # Application definition
 
@@ -58,22 +61,37 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "phonenumber_field",
     "django_filters",
+    "rest_framework_simplejwt",
+    "django_redis",
+    "corsheaders",
 ]
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-
-
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -88,7 +106,7 @@ ROOT_URLCONF = "house.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
